@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chapitre 1 - Le Réveil sur l'Île</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', serif;
+      background: linear-gradient(to bottom, #001f33, #00394d);
+      color: #f0f8ff;
+    }
+    #container {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 1rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.8rem;
+    }
+    p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+    }
+    button {
+      background-color: #00acc1;
+      color: #002f3d;
+      font-weight: bold;
+      border: none;
+      border-radius: 0.6rem;
+      padding: 0.8rem 1.5rem;
+      margin-top: 1rem;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    input[type="text"] {
+      padding: 0.6rem;
+      font-size: 1.1rem;
+      width: 80%;
+      margin-top: 1rem;
+      border-radius: 8px;
+      border: none;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Chapitre 1 – Le Réveil sur l'Île</h1>
+    <p>Un souffle marin. Tu te réveilles lentement sur une plage inconnue. Deux chemins s’offrent à toi :</p>
+    <button onclick="startPath('sentier')">🌸 Suivre le sentier fleuri</button>
+    <button onclick="startPath('rochers')">🌊 Escalader les rochers près de la mer</button>
+
+    <div id="content" class="hidden"></div>
+  </div>
+
+  <script>
+    let essais = 0;
+    let essaisSouvenir = 0;
+
+    function normalize(txt) {
+      return txt.toLowerCase().replace(/[’']/g, "").trim();
+    }
+
+    function startPath(path) {
+      const content = document.getElementById('content');
+      content.classList.remove('hidden');
+      essais = 0;
+      essaisSouvenir = 0;
+
+      if (path === 'sentier') {
+        content.innerHTML = `
+          <p>Un renard vert te mène à un arbre sculpté. Tu lis :</p>
+          <p><strong>“Je suis la couleur de l’espoir, de la mer, et ta préférée. Qui suis-je ?”</strong></p>
+          <input type="text" id="reponse" placeholder="Ta réponse...">
+          <button onclick="verifierEnigme('vert', 'sentierSuite')">Valider</button>
+          <p id="feedback"></p>
+        `;
+      } else {
+        content.innerHTML = `
+          <p>Le vent murmure : “Quel mot as-tu répété 22 fois pour qu’elle le croie ?”</p>
+          <input type="text" id="reponse" placeholder="Ta réponse...">
+          <button onclick="verifierEnigme('jetaime', 'rochersSuite')">Valider</button>
+          <p id="feedback"></p>
+        `;
+      }
+    }
+
+    function verifierEnigme(repJuste, nextStep) {
+      const input = document.getElementById('reponse').value;
+      const feedback = document.getElementById('feedback');
+      const clean = normalize(input);
+      essais++;
+
+      if (clean.replace(/\s/g, '') === normalize(repJuste).replace(/\s/g, '')) {
+        feedback.style.color = "lightgreen";
+        feedback.innerText = "Bonne réponse. Tu avances vers la suite...";
+        setTimeout(() => {
+          if (nextStep === 'sentierSuite') sentierSuite();
+          if (nextStep === 'rochersSuite') rochersSuite();
+        }, 1500);
+      } else {
+        feedback.style.color = "salmon";
+        if (essais >= 3) {
+          if (repJuste === 'vert') {
+            feedback.innerText = "Indice : pense à la couleur de la nature et de l'espoir.";
+          } else {
+            feedback.innerText = "Indice : trois mots, souvent répétés quand on aime vraiment.";
+          }
+        } else {
+          feedback.innerText = "Essaie encore...";
+        }
+      }
+    }
+
+    function sentierSuite() {
+      document.getElementById('content').innerHTML = `
+        <p>Tu découvres un vieux carnet. Une photo : votre premier rendez-vous. Où étiez-vous ?</p>
+        <input type="text" id="souvenir" placeholder="Lieu du 1er date...">
+        <button onclick="verifierSouvenir('restaurant')">Valider</button>
+        <p id="resultat"></p>
+      `;
+    }
+
+    function rochersSuite() {
+      document.getElementById('content').innerHTML = `
+        <p>Un coquillage s’ouvre. À l’intérieur, une rose en papier. Un murmure : “Deuxième rendez-vous… Où étiez-vous ?”</p>
+        <input type="text" id="souvenir" placeholder="Lieu du 2e date...">
+        <button onclick="verifierSouvenir('complexe desjardins')">Valider</button>
+        <p id="resultat"></p>
+      `;
+    }
+
+    function verifierSouvenir(correct) {
+      const val = document.getElementById("souvenir").value;
+      const result = document.getElementById("resultat");
+      essaisSouvenir++;
+
+      if (normalize(val).includes(normalize(correct))) {
+        result.style.color = "lightgreen";
+        result.innerText = "Tu t’en souviens. L’île t’accepte. Fin du chapitre 1.";
+      } else {
+        result.style.color = "salmon";
+        if (essaisSouvenir >= 3) {
+          result.innerText = "Indice : un lieu simple, fréquenté souvent, pas très loin du centre-ville.";
+        } else {
+          result.innerText = "Pas encore… réfléchis à ce moment spécial.";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
